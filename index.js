@@ -26,19 +26,42 @@ async function run() {
 
     const supplies = client.db("Medical_Supply").collection("supplies");
 
-    app.post("/postBlog", async (req, res) => {
-      const data = req.body;
-      const result = await portfolioDb.insertOne(data);
-      res.send(result);
-    });
-
-    // --- getting all the blogs
+    // --- getting all the supplies
     app.get("/supplies", async (req, res) => {
       const query = {};
       const cursor = supplies.find(query);
       const result = await cursor.toArray();
       res.send(result);
     });
+
+    // --- getting single supply details
+    app.get('/supplies/:id', async(req, res)=>{
+      const params = req.params;
+      const {id} = params ; 
+      console.log(id);
+      const query = {_id : new ObjectId(id)};
+      const result = await supplies.findOne(query);
+      res.send(result) ; 
+    })
+
+    // --- add a new supply post 
+    app.post("/dashboard/create-supply", async (req, res) => {
+      const data = req.body;
+      const result = await supplies.insertOne(data);
+      res.send(result);
+    });
+
+    // --- delete a supply
+    app.delete('/dashboard/delete-supply/:id', async(req, res)=>{
+      const params = req.params;
+      const {id} = params;
+      const query = {_id : new ObjectId(id)};
+      const result =  await supplies.deleteOne(query);
+      res.send(result);
+    })
+
+
+
   } finally {
     //   await client.close();
   }
