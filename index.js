@@ -25,6 +25,7 @@ async function run() {
     client.connect();
 
     const supplies = client.db("Medical_Supply").collection("supplies");
+    const testimonials = client.db("Medical_Supply").collection("testimonials");
 
     // --- getting all the supplies
     app.get("/supplies", async (req, res) => {
@@ -59,6 +60,7 @@ async function run() {
       const update = {$set : data} ;
 
       const result = await supplies.updateOne(filter, update) ;
+      // console.log(data);
       res.send(result) ;
     })
 
@@ -71,6 +73,13 @@ async function run() {
       res.send(result);
     })
 
+    // --- get testimonials data
+    app.get("/testimonials", async (req, res) => {
+      const query = {};
+      const cursor = testimonials.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
 
   } finally {
