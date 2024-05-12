@@ -22,7 +22,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    client.connect();
 
     const supplies = client.db("Medical_Supply").collection("supplies");
 
@@ -38,7 +38,6 @@ async function run() {
     app.get('/supplies/:id', async(req, res)=>{
       const params = req.params;
       const {id} = params ; 
-      console.log(id);
       const query = {_id : new ObjectId(id)};
       const result = await supplies.findOne(query);
       res.send(result) ; 
@@ -50,6 +49,18 @@ async function run() {
       const result = await supplies.insertOne(data);
       res.send(result);
     });
+
+    // --- edit a supply
+    app.patch('/dashboard/edit-supply/:id', async(req, res)=>{
+      const params = req.params ; 
+      const {id} = params ; 
+      const data = req.body ; 
+      const filter = {_id : new ObjectId(id)};
+      const update = {$set : data} ;
+
+      const result = await supplies.updateOne(filter, update) ;
+      res.send(result) ;
+    })
 
     // --- delete a supply
     app.delete('/dashboard/delete-supply/:id', async(req, res)=>{
@@ -73,5 +84,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("Listening to port 5001");
+  console.log("Listening to port,",port);
 });
